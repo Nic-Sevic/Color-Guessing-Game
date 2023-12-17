@@ -73,39 +73,48 @@ function playerGeneration() {
 // generation of game board
 function boardGeneration() {
 	global $boardSize;
+	$board = array();
 
 	if (isset($_POST['boardSize'])) {
-		if ($boardSize % $boardSize != $boardSize) {
-			echo "Board size must be a square number";
-		} else {
-			$boardSize = $_POST['boardSize'];
-		}
+		$boardSize = $_POST['boardSize'];
 	} else {
-		$boardSize = 4;
+		$boardSize = 2;
 	}
-	return colorGeneration();
+
+	// create board object
+	$boardColumns = sqrt($boardSize);
+	$boardSquares = array();
+	for ($i = 0; $i < $boardColumns; $i++) {
+		for ($j = 0; $j < $boardColumns; $j++){
+			$key = $i . $j;
+			array_push($boardSquares, $key);
+		}
+	}
+
+	return colorGeneration($boardSquares);
 }
 
 // generation of colors for board
-function colorGeneration() {
-	global $boardSize;
-	global $boardColors;
+function colorGeneration($boardSquares) {
+	$colors = array();
+	$hexValues = array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
 
-	$hexTable = array('0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f');
-	for ($i = 0; $i < $boardSize; $i++) {
-		$color = array_rand($hexTable, 6);
-		array_push($boardColors, $color);
+	while (count($colors) < $boardSquares) {
+		$color = array_rand($hexValues, 6);
+		array_push($colors, '#' . $color);
+		array_unique($colors);
 	}
-}
 
-// regenerates the colors
-if (isset($_GET['regenerate'])) {
-	colorGeneration();
+	sort($colors);
+	$board = array_combine($boardSquares, $colors);
+	
+	return $board;
 }
 
 // assignment of color 
 function colorAssignment() {
 	global $boardColors;
+
 	$colorAssignment = array_rand($boardColors, 1);
 	return $colorAssignment;
 }
@@ -124,24 +133,30 @@ function turnAssignment() {
 }
 
 // submission of clue
-// TODO: do we really need to keep this?, yes if played in different locations because need to submit to other player
 function clueSubmission() {
 	$clue = $_POST['clue'];
 	return $clue;
-	// TODO trigger guess prompts ?
 }
 
 // guessing of color; all guesses submitted at same time
 // TODO: need to make so multiple players can guess and scoring only happens after all guesses submitted
+// right now set up for only one player to guess
 function guessSubmission() {
 	global $players;
+	global $turn;
+	$guesses = array();
 
 	if (isset($_POST['guess'])) {
 		// TODO skip clue giver?
 		$guess = $_POST['guess'];
-		$players[i]->setGuess($guess);
+		// really wonky way to get guess into player object
+		// TODO absolutely need to fix this
+		foreach ($players as $player) {
+			$player->setGuess($guess);
+		}
+		$players[$turn]->setGuess('');
 		// trigger comparison after all guesses submitted
-		pointScoring();
+		return pointScoring();
 	}
 }
 
@@ -155,7 +170,11 @@ function pointScoring(){
 	for ($i = 0; $i < $numPlayers; $i++) {
 		// skip clue giver
 		if ($i == $turn) {
-			continue;
+			if ($i != $numPlayers - 1){
+				break;
+			} else {
+				$i++;
+			}
 		}
 		// player and clue giver earn pt for matching
 		if ($players[$i]->getGuess() == $colorAssignment) {
@@ -169,7 +188,7 @@ function pointScoring(){
 			}
 		}
 	}
-	gameOver();
+	return gameOver();
 }
 
 // definition of game over
