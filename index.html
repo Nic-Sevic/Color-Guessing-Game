@@ -12,17 +12,13 @@
 				In this game you'll be assigned a color. You give a one word clue and try to get the other players to correctly guess the color. Whoever gets to 10 points first wins. <br>
 			</p>
 		</div>
-		<form action="mechanics.php" method="post">
-			How many players? <input type="number" placeholder=2 name="numPlayers" min="2" max="6">
-			What are the players names? <input type="text" placeholder="Player 1, Player 2, etc" name="playerNames"><br>
-			What size board? <input type="number" name="boardSize" placeholder="up to 25" min="3" max="25"><br>
-			<input type="Start Game" >
+		<form id="gameStart">
+			How many players? 			<input type="number" name="numPlayers"  placeholder=2          min="2" max="6"  value=2>
+			What are the players names? <input type="text" 	 name="playerNames" placeholder="Player 1, Player 2, etc"   value="No, Nope"><br>
+			What size board? 			<input type="number" name="boardSize"   placeholder="up to 25" min="3" max="25" value=3><br>
+			<input type="submit" value="Start Game">
 		</form>
 		<div id="gameBoard">
-			<div class="colorBox" id="box1"> x </div>
-			<div class="colorBox" id="box2"> x </div>
-			<div class="colorBox" id="box3"> x </div>
-			<div class="colorBox" id="box4"> x </div>
 		</div>
 		<div id="guess">
 			<form action="mechanics.php" method="post">
@@ -39,14 +35,15 @@
 				<div id="player1">player 1<span>: #</span></div>
 				<div id="player2">player 2<span>: #</span></div>
 		</div>
+		<div id="gameover">
+			<h2>Game Over</h2>
+			<h3>Player x wins!</h3>
+		</div>
 		<form action="mechanics.php" method="get">
 			<div id="reset">
 				<input type="submit" value="New colors please" name="regenerate">
 			</div>
 		</form>
-		<div id="gameover">
-			<h2>Game Over</h2>
-			<h3>Player x wins!</h3>
-		</div>
 	</div>
+	<script src="game.js"></script>
 </html>

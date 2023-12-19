@@ -1,14 +1,31 @@
 <?php
-
+echo('mechanics.php started');
 /*
 * 
 * 
 */
+
 $numPlayers;
 $playerNames = array();
 $players = array();
 $boardSize;
 $boardColors = array();
+
+// accept requests from game.js
+if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
+	
+	// $boardColors = json_decode(boardGeneration());
+	// $colorAssignment = json_decode(colorAssignment());
+	// $turn = turnAssignment();
+	// $clue = json_decode(clueSubmission());
+	// $guess = json_decode(guessSubmission());
+	// $gameOver = gameOver();
+	$functionname = $_POST['function'];
+	$arg1 = $_POST['arg1'];
+	$arg2 = $_POST['arg2'];
+
+	call_user_func($functionname, $arg1, $arg2);
+}
 
 // initiation of players, takes from form submission or defaults to 2 players
 class Player {
@@ -41,24 +58,27 @@ class Player {
 	}
 }
 
-function playerInitiation() {
-	global $numPlayers;
-	global $playerNames;
+ function playerInitiation($numPlayers, $playerNames) {
+	echo 'playerInitiation started';
+// 	global $numPlayers;
+// 	global $playerNames;
 
-	if (isset($_POST['playerNames']) && isset($_POST['numPlayers'])) {
-		$playerNames = $_POST['playerNames'];
-		$numPlayers = $_POST['numPlayers'];
-	} else {
-		$numPlayers = 2;
-		$playerNames = array('Player 1', 'Player 2');
-	}
-	return playerGeneration();
+	// commmented out while trying a different fetch method
+	// if (isset($_POST['playerNames']) && isset($_POST['numPlayers'])) {
+	// 	$playerNames = $_POST['playerNames'];
+	// 	$numPlayers = $_POST['numPlayers'];
+	// } else {
+	// 	$numPlayers = 2;
+	// 	$playerNames = array('Player 1', 'Player 2');
+	// }
+	return playerGeneration($numPlayers, $playerNames);
 }
 
-function playerGeneration() {
+function playerGeneration($numPlayers, $playerNames) {
+	echo 'playerGeneration started';
 	global $players;
-	global $playerNames;
-	global $numPlayers;
+	// global $playerNames;
+	// global $numPlayers;
 
 	for ($i = 0; $i < $numPlayers; $i++) {
 		$players[$i] = new Player();
@@ -66,7 +86,7 @@ function playerGeneration() {
 		$players[$i]->setScore(0);
 		$players[$i]->setGuess('');
 	}
-	return $players;
+	return json_encode($players);
 }
 
 
@@ -108,7 +128,7 @@ function colorGeneration($boardSquares) {
 	sort($colors);
 	$board = array_combine($boardSquares, $colors);
 	
-	return $board;
+	return json_encode($board);
 }
 
 // assignment of color 
@@ -116,7 +136,7 @@ function colorAssignment() {
 	global $boardColors;
 
 	$colorAssignment = array_rand($boardColors, 1);
-	return $colorAssignment;
+	return json_encode($colorAssignment);
 }
 
 // turn assignment
@@ -135,7 +155,7 @@ function turnAssignment() {
 // submission of clue
 function clueSubmission() {
 	$clue = $_POST['clue'];
-	return $clue;
+	return json_encode($clue);
 }
 
 // guessing of color; all guesses submitted at same time
@@ -204,6 +224,6 @@ function gameOver() {
 	if (count($winner) == 0) {
 		return false;
 	} else {
-		return $winner;
+		return json_encode($winner);
 	}
 }
