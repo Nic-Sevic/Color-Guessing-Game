@@ -1,10 +1,11 @@
 <?php
-echo('mechanics.php started');
+
 /*
 * 
 * 
 */
 
+// print_r($_SERVER); used to see what is being sent to server
 $numPlayers;
 $playerNames = array();
 $players = array();
@@ -12,26 +13,30 @@ $boardSize;
 $boardColors = array();
 
 // accept requests from game.js
-if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == 'POST') {
-	
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+	$data = $_POST;
+	$functionname = $data['functionname'];
+	$arg1 = $data['players'];
+	$arg2 = explode(',', $data['names']);
+
 	// $boardColors = json_decode(boardGeneration());
 	// $colorAssignment = json_decode(colorAssignment());
 	// $turn = turnAssignment();
 	// $clue = json_decode(clueSubmission());
 	// $guess = json_decode(guessSubmission());
 	// $gameOver = gameOver();
-	$functionname = $_POST['function'];
-	$arg1 = $_POST['arg1'];
-	$arg2 = $_POST['arg2'];
-
+	// $functionname = $_POST['functionname'];
+	// $arg1 = $_POST['arg1'];
+	// $arg2 = $_POST['arg2'];
 	call_user_func($functionname, $arg1, $arg2);
 }
 
 // initiation of players, takes from form submission or defaults to 2 players
+//TODO: do I need the get functions then? Or should there be some other missing method so the attributes are private but returnable?
 class Player {
-	private $name;
-	private $score;
-	private $guess;
+	public $name;
+	public $score;
+	public $guess;
 
 	public function setName($name) {
 		$this->name = $name;
@@ -59,7 +64,6 @@ class Player {
 }
 
  function playerInitiation($numPlayers, $playerNames) {
-	echo 'playerInitiation started';
 // 	global $numPlayers;
 // 	global $playerNames;
 
@@ -75,18 +79,18 @@ class Player {
 }
 
 function playerGeneration($numPlayers, $playerNames) {
-	echo 'playerGeneration started';
 	global $players;
 	// global $playerNames;
 	// global $numPlayers;
-
 	for ($i = 0; $i < $numPlayers; $i++) {
 		$players[$i] = new Player();
 		$players[$i]->setName($playerNames[$i]);
 		$players[$i]->setScore(0);
 		$players[$i]->setGuess('');
 	}
-	return json_encode($players);
+	//header('Content-Type: application/json');
+	echo json_encode($players);
+	return $players;
 }
 
 
