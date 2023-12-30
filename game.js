@@ -26,9 +26,11 @@ document.getElementById('gameStart').addEventListener('submit', function (event)
   $.ajax({
     url: 'mechanics.php',
     type: 'POST',
-    data: { functionname: 'playerGeneration', players: formData.get('players'), names: formData.get('playerNames'), boardSize: formData.get('boardSize') },
+    data: { functionname: 'playerGeneration', players: formData.get('numPlayers'), names: formData.get('playerNames'), boardSize: formData.get('boardSize') },
     success: function (response) {
+      console.log(response);
       let players = JSON.parse(response);
+      console.log(players);
       for (let i = 0; i < players.length; i++) {
         let child = document.createElement('div');
         child.classList.add('playerScore');

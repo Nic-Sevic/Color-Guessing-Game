@@ -18,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	$functionname = $data['functionname'];
 	$arg1 = $data['players'];
 	$arg2 = explode(',', $data['names']);
+	$arg3 = $data['boardSize'];
 
 	// $boardColors = json_decode(boardGeneration());
 	// $colorAssignment = json_decode(colorAssignment());
